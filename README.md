@@ -53,7 +53,7 @@ Node version: 20 or newer
 
 The server listens on the platform-provided `PORT` and serves the frontend from `dist/public`. Do not set the publish directory to `dist` on a static host; the browser bundle is in `dist/public`. The production fallback is implemented as Express middleware so nested URLs are served correctly across Express router versions.
 
-If using Vercel or Netlify as a static site, use `pnpm build` and publish `dist/public`, but the server process and `server/index.ts` are not used in that mode.
+For Vercel, the repository now includes `vercel.json` with the correct settings: `pnpm install --frozen-lockfile`, `pnpm build:vercel`, output directory `dist/public`, and a single-page-app rewrite to `index.html`. The server process and `server/index.ts` are not used in Vercel static mode.
 
 ## Product boundaries represented in the prototype
 
