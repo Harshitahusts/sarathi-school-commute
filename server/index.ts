@@ -18,8 +18,9 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  // Handle client-side routing - serve index.html for all routes
-  app.get("*", (_req, res) => {
+  // Handle client-side routing without a wildcard route pattern. This works
+  // across Express 4 and newer path-to-regexp router implementations.
+  app.use((_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 

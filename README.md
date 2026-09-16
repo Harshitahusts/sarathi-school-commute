@@ -39,6 +39,22 @@ pnpm build
 5. Open **Control room**, use **Acknowledge & notify** on the seeded Cab 02 delay to resolve the exception and update the live metrics.
 6. Use the moon/sun icon in the top-right corner to preview the dark theme.
 
+## Deploy from GitHub
+
+This repository includes a small Express production server, so deploy it as a **Node.js web service**, not as a static-only site.
+
+Use these settings on Render, Railway, or a similar Node host:
+
+```text
+Build command: pnpm install --frozen-lockfile && pnpm build
+Start command: pnpm start
+Node version: 20 or newer
+```
+
+The server listens on the platform-provided `PORT` and serves the frontend from `dist/public`. Do not set the publish directory to `dist` on a static host; the browser bundle is in `dist/public`. The production fallback is implemented as Express middleware so nested URLs are served correctly across Express router versions.
+
+If using Vercel or Netlify as a static site, use `pnpm build` and publish `dist/public`, but the server process and `server/index.ts` are not used in that mode.
+
 ## Product boundaries represented in the prototype
 
 The UI treats over-capacity, missing scans, route anomalies, and wrong-collector scenarios as safety-critical states. It intentionally does not include parent-viewable cabin video, in-ride tablets, face matching, emotion recognition, or autonomous AI escalation. AI is presented as a small event-log assistant; human operators remain responsible for safety decisions.
