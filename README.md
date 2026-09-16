@@ -12,6 +12,10 @@ Sarathi is a frontend-only prototype for a scheduled, parent-paid school commute
 
 This is intentionally a **basic interactive prototype without a backend**. Data is seeded in the browser and resets when the page is refreshed.
 
+## Complete product design and lifecycle document
+
+The full source brief, product-design rationale, operating model, lifecycle, MVP boundary, KPI targets, AI/privacy principles, and pilot roadmap are available in the repository here: [Complete Product Design and Lifecycle Document](docs/complete-product-design-and-lifecycle-document.pdf).
+
 ## Run locally
 
 Requirements: Node.js 20+ and pnpm.
