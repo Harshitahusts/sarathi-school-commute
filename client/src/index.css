@@ -203,3 +203,10 @@ body { background: #f2f6f4; }
   .route-map { min-height: 225px; }
   .notification-panel { border-radius: 14px; }
 }
+
+/* Semantic arrival buttons retain the queue's card-like interaction affordance */
+.arrival-row { width: 100%; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; margin-top: 18px; }
+.arrival-row + .arrival-row { margin-top: 0; }
+.arrival-row:hover { background: #f4f9f6; }
+.arrival-row:focus-visible { position: relative; z-index: 1; outline: 3px solid rgba(77, 174, 158, .35); outline-offset: -3px; }
+.app-dark .arrival-row:hover { background: #203f36; }
