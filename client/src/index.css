@@ -141,3 +141,65 @@ button:focus-visible, a:focus-visible { outline: 3px solid rgba(77, 174, 158, .3
 .notification-icon-green { background: #e2f4e9; color: #3e9769; }
 .notification-icon-blue { background: #e3eff8; color: #4f88b1; }
 @media (max-width: 760px) { .notification-panel { position: fixed; top: 65px; right: 16px; left: 16px; width: auto; } .route-map::after { opacity: 1; transform: none; } }
+
+/* UX polish: clearer hierarchy, calmer surfaces, and stronger touch targets */
+html { scroll-behavior: smooth; }
+body { background: #f2f6f4; }
+.app-shell { background: radial-gradient(circle at 80% -10%, rgba(210, 239, 228, .5), transparent 34%), #f2f6f4; }
+.app-dark { background: radial-gradient(circle at 80% -10%, rgba(38, 83, 70, .35), transparent 34%), #10201c; }
+.sidebar { box-shadow: 8px 0 26px rgba(34, 82, 66, .045); }
+.brand-lockup { padding-bottom: 34px; }
+.brand-mark { box-shadow: 0 9px 20px rgba(23, 124, 112, .25); }
+.topbar { box-shadow: 0 1px 0 rgba(39, 83, 68, .025); }
+.topbar-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; }
+.topbar-icon:hover { background: #e8f3ee; }
+.app-dark .topbar-icon:hover { background: #21443a; }
+.content-wrap { max-width: 1480px; padding-top: 44px; }
+.page-heading { margin-bottom: 28px; }
+.page-heading h1 { font-size: clamp(31px, 3vw, 40px); letter-spacing: -.9px; }
+.page-heading p { max-width: 560px; line-height: 1.6; }
+.section-tabs { gap: 24px; margin-bottom: 25px; }
+.section-tab { min-height: 34px; padding-bottom: 12px; }
+.notice-banner { padding: 15px 18px; border-radius: 14px; box-shadow: 0 10px 24px rgba(47, 112, 98, .06); }
+.notice-banner p { line-height: 1.4; }
+.safe-card, .panel, .route-card, .metric-card, .control-kpi, .payout-card { box-shadow: 0 10px 28px rgba(33, 67, 58, .05); }
+.safe-card { position: relative; overflow: hidden; }
+.safe-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: linear-gradient(#47ad83, #177c70); }
+.panel, .route-card, .metric-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+@media (hover: hover) and (min-width: 761px) {
+  .panel:hover, .route-card:hover, .metric-card:hover { transform: translateY(-2px); border-color: #cfe2d9; box-shadow: 0 14px 32px rgba(33, 67, 58, .08); }
+}
+.app-dark .panel:hover, .app-dark .route-card:hover, .app-dark .metric-card:hover { border-color: #3b6658; }
+.primary-button, .secondary-button, .full-width-button, .scan-button { min-height: 40px; }
+.primary-button:focus-visible, .secondary-button:focus-visible, .full-width-button:focus-visible, .scan-button:focus-visible, .text-action:focus-visible, .icon-button:focus-visible, .back-link:focus-visible { outline: 3px solid rgba(77, 174, 158, .35); outline-offset: 3px; }
+.text-action { min-height: 32px; }
+.route-map { min-height: 260px; overflow: hidden; border-radius: 12px; }
+.route-map::after { font-size: 10px; box-shadow: 0 5px 14px rgba(42, 88, 70, .1); }
+.map-legend { padding-bottom: 12px; }
+.notification-panel { animation: notification-in .18s ease-out both; transform-origin: top right; }
+@keyframes notification-in { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.toast { border: 1px solid #cfe8dc; box-shadow: 0 14px 30px rgba(27, 91, 70, .16); }
+.app-dark .toast { border-color: #376a58; }
+
+@media (max-width: 1080px) {
+  .content-wrap { padding-top: 34px; }
+  .page-heading h1 { font-size: 34px; }
+}
+@media (max-width: 760px) {
+  .app-shell { background: #f2f6f4; }
+  .content-wrap { padding: 28px 16px 64px; }
+  .topbar { padding: 0 16px; }
+  .breadcrumb span, .breadcrumb svg { display: none; }
+  .breadcrumb { font-size: 12px; }
+  .topbar-actions { gap: 7px; }
+  .page-heading { margin-bottom: 21px; }
+  .page-heading h1 { font-size: 30px; line-height: 1.08; }
+  .page-heading p { font-size: 12px; }
+  .section-tabs { gap: 18px; margin-right: -16px; padding-right: 16px; }
+  .section-tab { min-height: 38px; }
+  .notice-banner { align-items: flex-start; gap: 12px; padding: 13px; }
+  .notice-banner p { max-width: 250px; }
+  .safe-card::before { width: 3px; }
+  .route-map { min-height: 225px; }
+  .notification-panel { border-radius: 14px; }
+}

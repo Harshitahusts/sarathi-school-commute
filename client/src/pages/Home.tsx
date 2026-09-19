@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -429,7 +429,10 @@ function Shell({
                   </div>
                   <button
                     className="notification-item"
-                    onClick={() => setRole("control")}
+                    onClick={() => {
+                      setRole("control");
+                      setNotificationsOpen(false);
+                    }}
                   >
                     <span className="notification-item-icon notification-icon-amber">
                       <AlertTriangle size={15} />
@@ -441,7 +444,10 @@ function Shell({
                   </button>
                   <button
                     className="notification-item"
-                    onClick={() => setRole("parent")}
+                    onClick={() => {
+                      setRole("parent");
+                      setNotificationsOpen(false);
+                    }}
                   >
                     <span className="notification-item-icon notification-icon-green">
                       <CheckCircle2 size={15} />
@@ -453,7 +459,10 @@ function Shell({
                   </button>
                   <button
                     className="notification-item"
-                    onClick={() => setRole("school")}
+                    onClick={() => {
+                      setRole("school");
+                      setNotificationsOpen(false);
+                    }}
                   >
                     <span className="notification-item-icon notification-icon-blue">
                       <Bell size={15} />
@@ -2000,7 +2009,14 @@ function ControlRoomView() {
 
 export default function Home() {
   const [role, setRole] = useState<Role>("parent");
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => {
+    return window.localStorage.getItem("sarathi-theme") === "dark";
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem("sarathi-theme", dark ? "dark" : "light");
+  }, [dark]);
+
   return (
     <Shell role={role} setRole={setRole} dark={dark} setDark={setDark}>
       {role === "parent" ? (
