@@ -1612,13 +1612,19 @@ function SchoolView() {
                   <strong>Scanner ready</strong>
                   <p>Hold crew QR or school ID inside the frame.</p>
                 </div>
-                <button onClick={() => setGateOpen(false)}>
+                <button
+                  type="button"
+                  aria-label="Close gate scanner"
+                  onClick={() => setGateOpen(false)}
+                >
                   <X size={16} />
                 </button>
               </div>
             )}
-            <div
-              className="arrival-row arrival-selected"
+            <button
+              type="button"
+              className={`arrival-row ${selected === "Van 04" ? "arrival-selected" : ""}`}
+              aria-pressed={selected === "Van 04"}
               onClick={() => setSelected("Van 04")}
             >
               <div className="arrival-time">
@@ -1638,8 +1644,13 @@ function SchoolView() {
                 <StatusPill tone="blue">Approaching</StatusPill>
                 <ChevronRight size={16} />
               </div>
-            </div>
-            <div className="arrival-row" onClick={() => setSelected("Cab 02")}>
+            </button>
+            <button
+              type="button"
+              className={`arrival-row ${selected === "Cab 02" ? "arrival-selected" : ""}`}
+              aria-pressed={selected === "Cab 02"}
+              onClick={() => setSelected("Cab 02")}
+            >
               <div className="arrival-time">
                 <strong>08:01</strong>
                 <span>in 27 min</span>
@@ -1657,7 +1668,7 @@ function SchoolView() {
                 <StatusPill tone="slate">Scheduled</StatusPill>
                 <ChevronRight size={16} />
               </div>
-            </div>
+            </button>
           </div>
           <div className="panel handoff-panel">
             <div className="panel-heading">
