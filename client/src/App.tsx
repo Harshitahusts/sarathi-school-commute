@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -5,34 +6,54 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import Login, { type UserProfile } from "./pages/Login";
 
-
-function Router() {
+function Router({ profile }: { profile: UserProfile }) {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/">
+        <Home firstName={profile.firstName} />
+      </Route>
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+function readProfile(): UserProfile | null {
+  try {
+    const saved = window.localStorage.getItem("sarathi-profile");
+    if (!saved) return null;
+    const profile = JSON.parse(saved) as Partial<UserProfile>;
+    return profile.firstName &&
+      profile.lastName &&
+      profile.mobile &&
+      profile.email
+      ? (profile as UserProfile)
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 function App() {
+  const [profile, setProfile] = useState<UserProfile | null>(readProfile);
+
+  const completeLogin = (nextProfile: UserProfile) => {
+    window.localStorage.setItem("sarathi-profile", JSON.stringify(nextProfile));
+    setProfile(nextProfile);
+  };
+
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          {profile ? (
+            <Router profile={profile} />
+          ) : (
+            <Login onComplete={completeLogin} />
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
