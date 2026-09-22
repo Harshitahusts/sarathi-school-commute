@@ -210,3 +210,9 @@ body { background: #f2f6f4; }
 .arrival-row:hover { background: #f4f9f6; }
 .arrival-row:focus-visible { position: relative; z-index: 1; outline: 3px solid rgba(77, 174, 158, .35); outline-offset: -3px; }
 .app-dark .arrival-row:hover { background: #203f36; }
+
+/* Shared MVP feedback should be visible without interrupting the user's flow */
+.global-toast { position: fixed; right: 24px; bottom: 24px; z-index: 60; max-width: min(360px, calc(100vw - 32px)); }
+@media (max-width: 760px) {
+  .global-toast { right: 16px; bottom: 16px; left: 16px; max-width: none; }
+}

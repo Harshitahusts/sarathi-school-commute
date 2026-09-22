@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -42,6 +49,10 @@ import {
 
 type Role = "parent" | "driver" | "school" | "control";
 type ParentTab = "home" | "track" | "alerts" | "billing";
+type FeedbackHandler = (message: string) => void;
+
+const FeedbackContext = createContext<FeedbackHandler>(() => undefined);
+const useFeedback = () => useContext(FeedbackContext);
 
 type TimelineEvent = {
   time: string;
@@ -272,221 +283,234 @@ function Shell({
   const [mobileNav, setMobileNav] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
+  const [toast, setToast] = useState("");
+  const notify = (message: string) => {
+    setToast(message);
+    window.setTimeout(() => setToast(""), 2600);
+  };
   const roles: Role[] = ["parent", "driver", "school", "control"];
   return (
-    <div className={`app-shell ${dark ? "app-dark" : ""}`}>
-      <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
-        <div className="brand-lockup">
-          <div className="brand-mark">
-            <HeartHandshake size={19} strokeWidth={2.4} />
-          </div>
-          <div>
-            <div className="brand-name">sarathi</div>
-            <div className="brand-tag">care in motion</div>
-          </div>
-        </div>
-        <div className="workspace-label">WORKSPACE</div>
-        <div className="role-switcher">
-          {roles.map(item => (
-            <button
-              className={`role-item ${role === item ? "role-selected" : ""}`}
-              key={item}
-              onClick={() => {
-                setRole(item);
-                setMobileNav(false);
-              }}
-            >
-              <span className={`role-avatar role-${item}`}>
-                {item === "parent"
-                  ? "AS"
-                  : item === "driver"
-                    ? "RM"
-                    : item === "school"
-                      ? "TS"
-                      : "CR"}
-              </span>
-              <span>
-                <strong>{roleMeta[item].label}</strong>
-                <small>{roleMeta[item].sublabel}</small>
-              </span>
-              {role === item && (
-                <ChevronRight size={15} className="role-chevron" />
-              )}
-            </button>
-          ))}
-        </div>
-        <div className="sidebar-rule" />
-        <div className="nav-group-label">SAFETY LAYER</div>
-        <button
-          className="sidebar-link active-link"
-          onClick={() => {
-            setRole("parent");
-            setMobileNav(false);
-          }}
-        >
-          <ShieldCheck size={17} />
-          <span>Live safety view</span>
-          <span className="nav-live" />
-        </button>
-        <button className="sidebar-link" onClick={() => setRole("parent")}>
-          <FileCheck2 size={17} />
-          <span>Custody ledger</span>
-          <span className="nav-count">24</span>
-        </button>
-        <button className="sidebar-link" onClick={() => setRole("control")}>
-          <Navigation size={17} />
-          <span>Routes & pods</span>
-        </button>
-        <div className="nav-group-label nav-group-spaced">OPERATIONS</div>
-        <button className="sidebar-link" onClick={() => setRole("control")}>
-          <AlertTriangle size={17} />
-          <span>Exceptions</span>
-          <span className="nav-count count-warn">1</span>
-        </button>
-        <button className="sidebar-link" onClick={() => setRole("driver")}>
-          <UserCheck size={17} />
-          <span>Crew checks</span>
-        </button>
-        <button className="sidebar-link" onClick={() => setRole("control")}>
-          <Gauge size={17} />
-          <span>Pilot metrics</span>
-        </button>
-        <div className="sidebar-bottom">
-          <div className="privacy-card">
-            <div className="privacy-icon">
-              <LockKeyhole size={15} />
+    <FeedbackContext.Provider value={notify}>
+      <div className={`app-shell ${dark ? "app-dark" : ""}`}>
+        <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
+          <div className="brand-lockup">
+            <div className="brand-mark">
+              <HeartHandshake size={19} strokeWidth={2.4} />
             </div>
             <div>
-              <strong>Privacy-aware by design</strong>
-              <p>Event-log assist only. No cabin media leaves the vehicle.</p>
+              <div className="brand-name">sarathi</div>
+              <div className="brand-tag">care in motion</div>
             </div>
           </div>
-          <div className="sidebar-user">
-            <div className="mini-avatar">AS</div>
-            <div>
-              <strong>Ananya Sharma</strong>
-              <small>Household admin</small>
-            </div>
-            <MoreHorizontal size={17} className="muted-icon" />
-          </div>
-        </div>
-      </aside>
-      {mobileNav && (
-        <button
-          className="mobile-scrim"
-          aria-label="Close navigation"
-          onClick={() => setMobileNav(false)}
-        />
-      )}
-      <main className="main-shell">
-        <header className="topbar">
-          <button
-            className="mobile-menu"
-            onClick={() => setMobileNav(true)}
-            aria-label="Open menu"
-          >
-            <Menu size={20} />
-          </button>
-          <div className="breadcrumb">
-            <span>Gurugram pilot</span>
-            <ChevronRight size={14} />
-            <strong>{roleMeta[role].label}</strong>
-          </div>
-          <div className="topbar-actions">
-            <div className="system-status">
-              <span className="status-dot" /> All systems normal
-            </div>
-            <div className="notification-wrap">
+          <div className="workspace-label">WORKSPACE</div>
+          <div className="role-switcher">
+            {roles.map(item => (
               <button
-                className="topbar-icon"
-                aria-label="Notifications"
-                aria-expanded={notificationsOpen}
+                className={`role-item ${role === item ? "role-selected" : ""}`}
+                key={item}
                 onClick={() => {
-                  setNotificationsOpen(!notificationsOpen);
-                  setHasUnreadNotifications(false);
+                  setRole(item);
+                  setMobileNav(false);
                 }}
               >
-                <Bell size={18} />
-                {hasUnreadNotifications && (
-                  <span className="notification-dot" />
+                <span className={`role-avatar role-${item}`}>
+                  {item === "parent"
+                    ? "AS"
+                    : item === "driver"
+                      ? "RM"
+                      : item === "school"
+                        ? "TS"
+                        : "CR"}
+                </span>
+                <span>
+                  <strong>{roleMeta[item].label}</strong>
+                  <small>{roleMeta[item].sublabel}</small>
+                </span>
+                {role === item && (
+                  <ChevronRight size={15} className="role-chevron" />
                 )}
               </button>
-              {notificationsOpen && (
-                <div
-                  className="notification-panel"
-                  role="dialog"
+            ))}
+          </div>
+          <div className="sidebar-rule" />
+          <div className="nav-group-label">SAFETY LAYER</div>
+          <button
+            className="sidebar-link active-link"
+            onClick={() => {
+              setRole("parent");
+              setMobileNav(false);
+            }}
+          >
+            <ShieldCheck size={17} />
+            <span>Live safety view</span>
+            <span className="nav-live" />
+          </button>
+          <button className="sidebar-link" onClick={() => setRole("parent")}>
+            <FileCheck2 size={17} />
+            <span>Custody ledger</span>
+            <span className="nav-count">24</span>
+          </button>
+          <button className="sidebar-link" onClick={() => setRole("control")}>
+            <Navigation size={17} />
+            <span>Routes & pods</span>
+          </button>
+          <div className="nav-group-label nav-group-spaced">OPERATIONS</div>
+          <button className="sidebar-link" onClick={() => setRole("control")}>
+            <AlertTriangle size={17} />
+            <span>Exceptions</span>
+            <span className="nav-count count-warn">1</span>
+          </button>
+          <button className="sidebar-link" onClick={() => setRole("driver")}>
+            <UserCheck size={17} />
+            <span>Crew checks</span>
+          </button>
+          <button className="sidebar-link" onClick={() => setRole("control")}>
+            <Gauge size={17} />
+            <span>Pilot metrics</span>
+          </button>
+          <div className="sidebar-bottom">
+            <div className="privacy-card">
+              <div className="privacy-icon">
+                <LockKeyhole size={15} />
+              </div>
+              <div>
+                <strong>Privacy-aware by design</strong>
+                <p>Event-log assist only. No cabin media leaves the vehicle.</p>
+              </div>
+            </div>
+            <div className="sidebar-user">
+              <div className="mini-avatar">AS</div>
+              <div>
+                <strong>Ananya Sharma</strong>
+                <small>Household admin</small>
+              </div>
+              <MoreHorizontal size={17} className="muted-icon" />
+            </div>
+          </div>
+        </aside>
+        {mobileNav && (
+          <button
+            className="mobile-scrim"
+            aria-label="Close navigation"
+            onClick={() => setMobileNav(false)}
+          />
+        )}
+        <main className="main-shell">
+          <header className="topbar">
+            <button
+              className="mobile-menu"
+              onClick={() => setMobileNav(true)}
+              aria-label="Open menu"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="breadcrumb">
+              <span>Gurugram pilot</span>
+              <ChevronRight size={14} />
+              <strong>{roleMeta[role].label}</strong>
+            </div>
+            <div className="topbar-actions">
+              <div className="system-status">
+                <span className="status-dot" /> All systems normal
+              </div>
+              <div className="notification-wrap">
+                <button
+                  className="topbar-icon"
                   aria-label="Notifications"
+                  aria-expanded={notificationsOpen}
+                  onClick={() => {
+                    setNotificationsOpen(!notificationsOpen);
+                    setHasUnreadNotifications(false);
+                  }}
                 >
-                  <div className="notification-panel-heading">
-                    <strong>Notifications</strong>
+                  <Bell size={18} />
+                  {hasUnreadNotifications && (
+                    <span className="notification-dot" />
+                  )}
+                </button>
+                {notificationsOpen && (
+                  <div
+                    className="notification-panel"
+                    role="dialog"
+                    aria-label="Notifications"
+                  >
+                    <div className="notification-panel-heading">
+                      <strong>Notifications</strong>
+                      <button
+                        className="notification-close"
+                        aria-label="Close notifications"
+                        onClick={() => setNotificationsOpen(false)}
+                      >
+                        <X size={15} />
+                      </button>
+                    </div>
                     <button
-                      className="notification-close"
-                      aria-label="Close notifications"
-                      onClick={() => setNotificationsOpen(false)}
+                      className="notification-item"
+                      onClick={() => {
+                        setRole("control");
+                        setNotificationsOpen(false);
+                      }}
                     >
-                      <X size={15} />
+                      <span className="notification-item-icon notification-icon-amber">
+                        <AlertTriangle size={15} />
+                      </span>
+                      <span>
+                        <strong>Cab 02 delay acknowledged</strong>
+                        <small>4 minutes · traffic on Golf Course Road</small>
+                      </span>
+                    </button>
+                    <button
+                      className="notification-item"
+                      onClick={() => {
+                        setRole("parent");
+                        setNotificationsOpen(false);
+                      }}
+                    >
+                      <span className="notification-item-icon notification-icon-green">
+                        <CheckCircle2 size={15} />
+                      </span>
+                      <span>
+                        <strong>Van 04 boarding complete</strong>
+                        <small>9 of 9 children checked in</small>
+                      </span>
+                    </button>
+                    <button
+                      className="notification-item"
+                      onClick={() => {
+                        setRole("school");
+                        setNotificationsOpen(false);
+                      }}
+                    >
+                      <span className="notification-item-icon notification-icon-blue">
+                        <Bell size={15} />
+                      </span>
+                      <span>
+                        <strong>School handoff pending</strong>
+                        <small>Gate 2 countersignature requested</small>
+                      </span>
                     </button>
                   </div>
-                  <button
-                    className="notification-item"
-                    onClick={() => {
-                      setRole("control");
-                      setNotificationsOpen(false);
-                    }}
-                  >
-                    <span className="notification-item-icon notification-icon-amber">
-                      <AlertTriangle size={15} />
-                    </span>
-                    <span>
-                      <strong>Cab 02 delay acknowledged</strong>
-                      <small>4 minutes · traffic on Golf Course Road</small>
-                    </span>
-                  </button>
-                  <button
-                    className="notification-item"
-                    onClick={() => {
-                      setRole("parent");
-                      setNotificationsOpen(false);
-                    }}
-                  >
-                    <span className="notification-item-icon notification-icon-green">
-                      <CheckCircle2 size={15} />
-                    </span>
-                    <span>
-                      <strong>Van 04 boarding complete</strong>
-                      <small>9 of 9 children checked in</small>
-                    </span>
-                  </button>
-                  <button
-                    className="notification-item"
-                    onClick={() => {
-                      setRole("school");
-                      setNotificationsOpen(false);
-                    }}
-                  >
-                    <span className="notification-item-icon notification-icon-blue">
-                      <Bell size={15} />
-                    </span>
-                    <span>
-                      <strong>School handoff pending</strong>
-                      <small>Gate 2 countersignature requested</small>
-                    </span>
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
+              <button
+                className="topbar-icon"
+                onClick={() => setDark(!dark)}
+                aria-label="Toggle theme"
+              >
+                {dark ? <Sun size={18} /> : <Moon size={18} />}
+              </button>
             </div>
-            <button
-              className="topbar-icon"
-              onClick={() => setDark(!dark)}
-              aria-label="Toggle theme"
-            >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
+          </header>
+          <div className="content-wrap">{children}</div>
+        </main>
+        {toast && (
+          <div className="toast global-toast" role="status" aria-live="polite">
+            <CheckCircle2 size={16} />
+            {toast}
           </div>
-        </header>
-        <div className="content-wrap">{children}</div>
-      </main>
-    </div>
+        )}
+      </div>
+    </FeedbackContext.Provider>
   );
 }
 
@@ -911,6 +935,7 @@ function TrackView({
   onBack: () => void;
   verified: boolean;
 }) {
+  const flash = useFeedback();
   return (
     <div className="detail-layout">
       <div className="detail-main">
@@ -999,18 +1024,14 @@ function TrackView({
           </p>
           <button
             className="primary-button full"
-            onClick={() =>
-              window.alert(
-                "Control room call simulation: connected to Safety Desk · +91 124 555 0188"
-              )
-            }
+            onClick={() => flash("Safety desk connected · +91 124 555 0188")}
           >
             <Phone size={16} /> Call safety desk
           </button>
           <button
             className="secondary-button full"
             onClick={() =>
-              window.alert("Message composer opened for the control room.")
+              flash("Message composer opened for the control room")
             }
           >
             <MessageCircle size={16} /> Send a message
@@ -1556,6 +1577,7 @@ function SchoolView() {
   const [gateOpen, setGateOpen] = useState(false);
   const [selected, setSelected] = useState("Van 04");
   const [signed, setSigned] = useState(false);
+  const flash = useFeedback();
   return (
     <div className="ops-page">
       <div className="page-heading">
@@ -1719,7 +1741,15 @@ function SchoolView() {
                       ? "secondary-button compact"
                       : "primary-button compact"
                   }
-                  onClick={() => setSigned(!signed)}
+                  onClick={() => {
+                    const nextSigned = !signed;
+                    setSigned(nextSigned);
+                    flash(
+                      nextSigned
+                        ? `${selected} handoff countersigned and logged`
+                        : `${selected} countersign removed`
+                    );
+                  }}
                 >
                   {signed ? "Undo" : "Countersign"} <Check size={14} />
                 </button>
@@ -1751,8 +1781,8 @@ function SchoolView() {
             <button
               className="text-action"
               onClick={() =>
-                window.alert(
-                  "Exception: Cab 02 delayed 4 min due to traffic. Human review complete."
+                flash(
+                  "Cab 02 delayed 4 min due to traffic · human review complete"
                 )
               }
             >
@@ -1779,6 +1809,7 @@ function SchoolView() {
 function ControlRoomView() {
   const [active, setActive] = useState("Van 04");
   const [resolved, setResolved] = useState(false);
+  const flash = useFeedback();
   return (
     <div className="ops-page">
       <div className="page-heading">
@@ -1880,15 +1911,18 @@ function ControlRoomView() {
                   <div className="event-actions">
                     <button
                       className="primary-button compact"
-                      onClick={() => setResolved(true)}
+                      onClick={() => {
+                        setResolved(true);
+                        flash("Cab 02 delay acknowledged · parent notified");
+                      }}
                     >
                       <Check size={14} /> Acknowledge & notify
                     </button>
                     <button
                       className="text-action"
                       onClick={() =>
-                        window.alert(
-                          "AI assist: Deterministic delay rule fired at 07:31:40. Source: ETA model + GPS corridor event."
+                        flash(
+                          "Assist reasoning: deterministic delay rule from GPS + schedule event"
                         )
                       }
                     >
@@ -1960,9 +1994,7 @@ function ControlRoomView() {
             <button
               className="secondary-button full"
               onClick={() =>
-                window.alert(
-                  "Assist audit: model response linked to rule event, operator decision, and timestamp."
-                )
+                flash("Assist audit opened with event, decision, and timestamp")
               }
             >
               Open assist audit <ArrowRight size={15} />
@@ -2019,14 +2051,22 @@ function ControlRoomView() {
 }
 
 export default function Home() {
-  const [role, setRole] = useState<Role>("parent");
+  const [role, setRole] = useState<Role>(() => {
+    const savedRole = window.localStorage.getItem("sarathi-role");
+    return savedRole === "driver" ||
+      savedRole === "school" ||
+      savedRole === "control"
+      ? savedRole
+      : "parent";
+  });
   const [dark, setDark] = useState(() => {
     return window.localStorage.getItem("sarathi-theme") === "dark";
   });
 
   useEffect(() => {
+    window.localStorage.setItem("sarathi-role", role);
     window.localStorage.setItem("sarathi-theme", dark ? "dark" : "light");
-  }, [dark]);
+  }, [dark, role]);
 
   return (
     <Shell role={role} setRole={setRole} dark={dark} setDark={setDark}>
