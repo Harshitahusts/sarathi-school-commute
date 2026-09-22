@@ -273,12 +273,14 @@ function Shell({
   children,
   dark,
   setDark,
+  firstName,
 }: {
   role: Role;
   setRole: (role: Role) => void;
   children: ReactNode;
   dark: boolean;
   setDark: (value: boolean) => void;
+  firstName: string;
 }) {
   const [mobileNav, setMobileNav] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -381,7 +383,7 @@ function Shell({
             <div className="sidebar-user">
               <div className="mini-avatar">AS</div>
               <div>
-                <strong>Ananya Sharma</strong>
+                <strong>{firstName}</strong>
                 <small>Household admin</small>
               </div>
               <MoreHorizontal size={17} className="muted-icon" />
@@ -514,7 +516,7 @@ function Shell({
   );
 }
 
-function ParentView() {
+function ParentView({ firstName }: { firstName: string }) {
   const [tab, setTab] = useState<ParentTab>("home");
   const [showAlert, setShowAlert] = useState(true);
   const [verified, setVerified] = useState(false);
@@ -555,7 +557,7 @@ function ParentView() {
           </div>
           <h1>
             {tab === "home"
-              ? "Good morning, Ananya"
+              ? `Good morning, ${firstName}`
               : tab === "track"
                 ? "Aarav's live trip"
                 : tab === "alerts"
@@ -2050,7 +2052,7 @@ function ControlRoomView() {
   );
 }
 
-export default function Home() {
+export default function Home({ firstName = "Ananya" }: { firstName?: string }) {
   const [role, setRole] = useState<Role>(() => {
     const savedRole = window.localStorage.getItem("sarathi-role");
     return savedRole === "driver" ||
@@ -2069,9 +2071,15 @@ export default function Home() {
   }, [dark, role]);
 
   return (
-    <Shell role={role} setRole={setRole} dark={dark} setDark={setDark}>
+    <Shell
+      role={role}
+      setRole={setRole}
+      dark={dark}
+      setDark={setDark}
+      firstName={firstName}
+    >
       {role === "parent" ? (
-        <ParentView />
+        <ParentView firstName={firstName} />
       ) : role === "driver" ? (
         <DriverView />
       ) : role === "school" ? (
